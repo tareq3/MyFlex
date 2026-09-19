@@ -95,11 +95,13 @@ class _HomeScreenState extends State<HomeScreen> {
       title: BlocBuilder<DirectoryCubit, DirectoryState>(
         builder: (context, state) {
           if (state is DirectoryLoaded) {
-            return BreadcrumbNav(
-              pathSegments: state.pathSegments,
-              onSegmentTap: (index) {
-                context.read<DirectoryCubit>().navigateToSegment(index);
-              },
+            return Expanded( // <-- Added Expanded widget here
+              child: BreadcrumbNav(
+                pathSegments: state.pathSegments,
+                onSegmentTap: (index) {
+                  context.read<DirectoryCubit>().navigateToSegment(index);
+                },
+              ),
             );
           }
           return Row(
