@@ -38,8 +38,14 @@ class DirectoryItem extends Equatable {
 
   String extractTitle() {
     var title = displayName;
+    // Truncate at first occurrence of special characters like (, ), /, \, [, ], {, }, :
+    final specialCharIdx = title.indexOf(RegExp(r'[\(\)/\\\[\]{}:]'));
+    if (specialCharIdx != -1) {
+      title = title.substring(0, specialCharIdx);
+    }
+
     title = title.replaceAll(RegExp(r'\b(19|20)\d{2}\b'), '');
-    title = title.replaceAll(RegExp(r'[._\-\[\]()]'), ' ');
+    title = title.replaceAll(RegExp(r'[._\-]'), ' ');
     title = title.replaceAll(RegExp(r'\s+'), ' ').trim();
     final qualityPatterns = [
       'BluRay',
@@ -57,9 +63,13 @@ class DirectoryItem extends Equatable {
       'AAC',
       'DTS',
       'YIFY',
+      'AMZN',
+      'Amazon',
+      'Netflix',
+      'NF',
     ];
     for (final pattern in qualityPatterns) {
-      title = title.replaceAll(RegExp(pattern, caseSensitive: false), '');
+      title = title.replaceAll(RegExp(r'\b' + pattern + r'\b', caseSensitive: false), '');
     }
     title = title.replaceAll(RegExp(r'\s+'), ' ').trim();
     return title;

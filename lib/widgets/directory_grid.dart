@@ -10,12 +10,14 @@ import 'folder_card.dart';
 import 'video_card.dart';
 
 class DirectoryGrid extends StatelessWidget {
+  final String currentPath;
   final List<DirectoryItem> items;
   final void Function(DirectoryItem item) onFolderTap;
   final void Function(DirectoryItem item) onVideoTap;
 
   const DirectoryGrid({
     super.key,
+    required this.currentPath,
     required this.items,
     required this.onFolderTap,
     required this.onVideoTap,
@@ -37,6 +39,7 @@ class DirectoryGrid extends StatelessWidget {
             .toList();
 
         return GridView.builder(
+          key: PageStorageKey<String>(currentPath),
           padding: EdgeInsets.all(gap),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,

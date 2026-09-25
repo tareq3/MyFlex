@@ -25,6 +25,7 @@ class DirectoryContent extends StatelessWidget {
     return BlocBuilder<MovieInfoCubit, dynamic>(
       builder: (context, movieState) {
         final grid = DirectoryGrid(
+          currentPath: state.path,
           items: state.filteredItems,
           onFolderTap: onFolderTap,
           onVideoTap: onVideoTap,

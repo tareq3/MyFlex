@@ -32,7 +32,15 @@ class MovieService {
       }
 
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      final movieInfo = MovieInfo.fromJson(json);
+      var movieInfo = MovieInfo.fromJson(json);
+
+      if (!movieInfo.found) {
+        final fallback = await searchMovie(title);
+        if (fallback != null && fallback.found) {
+          movieInfo = fallback;
+        }
+      }
+
       _cache[cacheKey] = movieInfo;
       return movieInfo;
     } catch (e) {

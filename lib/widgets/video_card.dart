@@ -35,7 +35,6 @@ class _VideoCardState extends State<VideoCard> {
   @override
   void initState() {
     super.initState();
-    widget.onInfoRequest?.call();
   }
 
   KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
@@ -61,6 +60,7 @@ class _VideoCardState extends State<VideoCard> {
             onExit: (_) => setState(() => _isHovered = false),
             child: GestureDetector(
               onTap: widget.onTap,
+              onLongPress: widget.onInfoRequest,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 transform: Matrix4.diagonal3Values(

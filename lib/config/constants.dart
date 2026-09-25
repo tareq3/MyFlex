@@ -41,7 +41,7 @@ const List<ServerConfig> servers = [
 ];
 
 const String omdbApiKey = '7a0ed03d';
-const String omdbBaseUrl = 'http://www.omdbapi.com/';
+const String omdbBaseUrl = 'https://www.omdbapi.com/';
 
 const List<String> videoExtensions = [
   '.mp4',
