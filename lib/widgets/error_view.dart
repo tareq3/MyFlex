@@ -10,11 +10,12 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Scrollable so it never overflows on short (e.g. landscape) screens.
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(
               Icons.error_outline,

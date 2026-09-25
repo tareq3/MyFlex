@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'breadcrumb_item.dart';
 
-class BreadcrumbNav extends StatelessWidget {
+class BreadcrumbNav extends StatefulWidget {
   final List<String> pathSegments;
   final void Function(int index) onSegmentTap;
 
@@ -13,12 +15,49 @@ class BreadcrumbNav extends StatelessWidget {
   });
 
   @override
+  State<BreadcrumbNav> createState() => _BreadcrumbNavState();
+}
+
+class _BreadcrumbNavState extends State<BreadcrumbNav> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollToCurrentSegment();
+  }
+
+  @override
+  void didUpdateWidget(BreadcrumbNav oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.pathSegments, widget.pathSegments)) {
+      _scrollToCurrentSegment();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Keep the current folder visible when the path is wider than the screen.
+  void _scrollToCurrentSegment() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final segments = widget.pathSegments;
     return SingleChildScrollView(
+      controller: _scrollController,
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          for (int i = 0; i < pathSegments.length; i++) ...[
+          for (int i = 0; i < segments.length; i++) ...[
             if (i > 0)
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4),
@@ -28,10 +67,10 @@ class BreadcrumbNav extends StatelessWidget {
                   color: AppTheme.textMuted,
                 ),
               ),
-            _BreadcrumbItem(
-              label: _getSegmentLabel(pathSegments[i]),
-              isLast: i == pathSegments.length - 1,
-              onTap: () => onSegmentTap(i),
+            BreadcrumbItem(
+              label: _getSegmentLabel(segments[i]),
+              isLast: i == segments.length - 1,
+              onTap: () => widget.onSegmentTap(i),
             ),
           ],
         ],
@@ -41,43 +80,11 @@ class BreadcrumbNav extends StatelessWidget {
 
   String _getSegmentLabel(String path) {
     if (path == '/') return 'Home';
-    final parts = path.split('/');
-    final segment = parts.last;
+    final segment = path.split('/').last;
     try {
       return Uri.decodeComponent(segment);
     } catch (_) {
       return segment;
     }
-  }
-}
-
-class _BreadcrumbItem extends StatelessWidget {
-  final String label;
-  final bool isLast;
-  final VoidCallback onTap;
-
-  const _BreadcrumbItem({
-    required this.label,
-    required this.isLast,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: isLast ? null : onTap,
-      borderRadius: BorderRadius.circular(4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isLast ? AppTheme.textPrimary : AppTheme.accentColor,
-            fontWeight: isLast ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14,
-          ),
-        ),
-      ),
-    );
   }
 }

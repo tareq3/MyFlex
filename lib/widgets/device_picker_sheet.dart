@@ -30,14 +30,16 @@ class DevicePickerSheet extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          BlocBuilder<LocalDevicesCubit, LocalDevicesState>(
-            builder: (context, state) {
-              if (state is LocalDevicesDiscovering &&
-                  state.devices.isNotEmpty) {
-                return _buildDeviceList(state.devices);
-              }
-              return const DeviceListEmptyState();
-            },
+          Flexible(
+            child: BlocBuilder<LocalDevicesCubit, LocalDevicesState>(
+              builder: (context, state) {
+                if (state is LocalDevicesDiscovering &&
+                    state.devices.isNotEmpty) {
+                  return _buildDeviceList(state.devices);
+                }
+                return const DeviceListEmptyState();
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -58,7 +60,6 @@ class DevicePickerSheet extends StatelessWidget {
   Widget _buildDeviceList(List<DiscoveredDevice> devices) {
     return ListView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       itemCount: devices.length,
       itemBuilder: (context, index) {
         return DeviceListTile(

@@ -1,16 +1,18 @@
-# dhaka_flix
+# Dhaka Flix Project
 
-A new Flutter project.
+## Overview
+A brief description of what this project does (e.g., "A streaming service clone built with Flutter/Dart").
 
 ## Getting Started
+Instructions for setting up the development environment:
+1. Clone the repository.
+2. Run `flutter pub get` or equivalent dependency management command.
+3. Run `dart run build_runner watch --delete-conflicting-outputs` to start code generation.
 
-This project is a starting point for a Flutter application.
+## Architecture
+*   **State Management:** [e.g., Provider, Riverpod]
+*   **Networking:** [e.g., Dio, http package]
+*   **Key Modules:** List major components (e.g., `auth`, `video_player`, `profile`).
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Development Notes
+*   [Add any specific coding conventions or best practices here.]

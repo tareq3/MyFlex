@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../config/breakpoints.dart';
 import '../cubits/directory_cubit.dart';
 import '../cubits/movie_info_cubit.dart';
 import '../models/directory_item.dart';
+import '../services/poster_finder.dart';
 import 'folder_card.dart';
 import 'video_card.dart';
 
@@ -28,17 +30,19 @@ class DirectoryGrid extends StatelessWidget {
         final crossAxisCount = _calculateCrossAxisCount(constraints.maxWidth);
         final childAspectRatio = _calculateAspectRatio(constraints.maxWidth);
 
+        // Tighter gaps on phones leave more room for the posters.
+        final gap = context.isMobileLayout ? 12.0 : 16.0;
         final displayItems = items
             .where((i) => i.isFolder || i.isVideo)
             .toList();
 
         return GridView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(gap),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             childAspectRatio: childAspectRatio,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
+            crossAxisSpacing: gap,
+            mainAxisSpacing: gap,
           ),
           itemCount: displayItems.length,
           itemBuilder: (context, index) {
@@ -77,7 +81,7 @@ class DirectoryGrid extends StatelessWidget {
       final movieInfoCubit = context.read<MovieInfoCubit>();
       final movieInfo = movieInfoCubit.getCachedInfo(item.path);
       final baseUrl = context.read<DirectoryCubit>().currentServer.baseUrl;
-      final localPoster = _findLocalPoster(images, baseUrl);
+      final localPoster = PosterFinder.find(images, baseUrl);
 
       return VideoCard(
         item: item,
@@ -89,33 +93,5 @@ class DirectoryGrid extends StatelessWidget {
     }
 
     return const SizedBox.shrink();
-  }
-
-  String? _findLocalPoster(List<DirectoryItem> images, String baseUrl) {
-    if (images.isEmpty) return null;
-
-    final posterKeywords = ['poster', 'cover', 'thumb', 'folder', 'fanart'];
-
-    // First try to find an image with poster keywords
-    for (final image in images) {
-      final lowerName = image.name.toLowerCase();
-      for (final keyword in posterKeywords) {
-        if (lowerName.contains(keyword)) {
-          return '$baseUrl${_encodePath(image.path)}';
-        }
-      }
-    }
-
-    // Otherwise use the first image
-    return '$baseUrl${_encodePath(images.first.path)}';
-  }
-
-  String _encodePath(String path) {
-    final segments = path.split('/');
-    final encodedSegments = segments.map((segment) {
-      if (segment.isEmpty) return '';
-      return Uri.encodeComponent(segment);
-    }).toList();
-    return encodedSegments.join('/');
   }
 }

@@ -7,11 +7,17 @@ class SearchBarWidget extends StatefulWidget {
   final void Function(String query) onSearch;
   final VoidCallback onClear;
 
+  /// Fixed field width; `null` fills the available space.
+  final double? width;
+  final bool autofocus;
+
   const SearchBarWidget({
     super.key,
     this.initialQuery = '',
     required this.onSearch,
     required this.onClear,
+    this.width = 300,
+    this.autofocus = false,
   });
 
   @override
@@ -30,7 +36,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   void didUpdateWidget(SearchBarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialQuery != oldWidget.initialQuery) {
+    // Only sync external changes; resetting the text while typing breaks the
+    // IME composing state on mobile keyboards.
+    if (widget.initialQuery != _controller.text) {
       _controller.text = widget.initialQuery;
     }
   }
@@ -44,9 +52,11 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300,
+      width: widget.width,
       child: TextField(
         controller: _controller,
+        autofocus: widget.autofocus,
+        textInputAction: TextInputAction.search,
         onChanged: widget.onSearch,
         style: const TextStyle(color: AppTheme.textPrimary),
         decoration: InputDecoration(
