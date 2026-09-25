@@ -5,7 +5,9 @@ import '../theme/app_theme.dart';
 class SearchBarWidget extends StatefulWidget {
   final String initialQuery;
   final void Function(String query) onSearch;
+  final void Function(String query)? onGlobalSearch;
   final VoidCallback onClear;
+  final bool isGlobalSearchLoading;
 
   /// Fixed field width; `null` fills the available space.
   final double? width;
@@ -15,7 +17,9 @@ class SearchBarWidget extends StatefulWidget {
     super.key,
     this.initialQuery = '',
     required this.onSearch,
+    this.onGlobalSearch,
     required this.onClear,
+    this.isGlobalSearchLoading = false,
     this.width = 300,
     this.autofocus = false,
   });
@@ -58,19 +62,34 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         autofocus: widget.autofocus,
         textInputAction: TextInputAction.search,
         onChanged: widget.onSearch,
+        onSubmitted: (query) {
+          if (query.isNotEmpty && widget.onGlobalSearch != null) {
+            widget.onGlobalSearch!(query);
+          }
+        },
         style: const TextStyle(color: AppTheme.textPrimary),
         decoration: InputDecoration(
           hintText: 'Search...',
           prefixIcon: const Icon(Icons.search),
-          suffixIcon: _controller.text.isNotEmpty
-              ? IconButton(
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_controller.text.isNotEmpty && widget.onGlobalSearch != null)
+                IconButton(
+                  icon: const Icon(Icons.travel_explore),
+                  tooltip: 'Global Server Search',
+                  onPressed: () => widget.onGlobalSearch!(_controller.text),
+                ),
+              if (_controller.text.isNotEmpty)
+                IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _controller.clear();
                     widget.onClear();
                   },
-                )
-              : null,
+                ),
+            ],
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
       ),

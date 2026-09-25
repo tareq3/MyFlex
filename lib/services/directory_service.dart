@@ -9,10 +9,21 @@ class DirectoryService {
 
   DirectoryService({http.Client? client}) : _client = client ?? http.Client();
 
+  final Map<String, List<DirectoryItem>> _dirCache = {};
+
+  void clearDirectoryCache() {
+    _dirCache.clear();
+  }
+
   Future<List<DirectoryItem>> fetchDirectory(
     String path, {
     required String baseUrl,
   }) async {
+    final cacheKey = '$baseUrl$path';
+    if (_dirCache.containsKey(cacheKey)) {
+      return _dirCache[cacheKey]!;
+    }
+
     // Properly encode the path like Python's urllib.parse.quote(path, safe='/%')
     final encodedPath = _encodePath(path);
     final url = Uri.parse('$baseUrl$encodedPath');
@@ -28,7 +39,66 @@ class DirectoryService {
       );
     }
 
-    return _parseDirectoryListing(response.body, path);
+    final items = _parseDirectoryListing(response.body, path);
+    _dirCache[cacheKey] = items;
+    return items;
+  }
+
+  Stream<DirectoryItem> recursiveSearch({
+    required String startPath,
+    required String baseUrl,
+    required String query,
+    bool Function()? isCancelled,
+    void Function(int scannedFolders, int foundMatches)? onProgress,
+  }) async* {
+    final lowerQuery = query.toLowerCase().trim();
+    if (lowerQuery.isEmpty) return;
+
+    final queue = <String>[startPath];
+    final visited = <String>{};
+    int scannedCount = 0;
+    int matchCount = 0;
+
+    while (queue.isNotEmpty) {
+      if (isCancelled?.call() == true) break;
+
+      // Process batch of up to 5 folders concurrently
+      final batchSize = queue.length < 5 ? queue.length : 5;
+      final currentBatch = queue.sublist(0, batchSize);
+      queue.removeRange(0, batchSize);
+
+      final futures = currentBatch.map((folderPath) async {
+        if (visited.contains(folderPath)) return <DirectoryItem>[];
+        visited.add(folderPath);
+
+        try {
+          return await fetchDirectory(folderPath, baseUrl: baseUrl);
+        } catch (_) {
+          return <DirectoryItem>[];
+        }
+      });
+
+      final results = await Future.wait(futures);
+      scannedCount += currentBatch.length;
+
+      for (final items in results) {
+        for (final item in items) {
+          if (item.isFolder) {
+            final folderPath = item.path.endsWith('/') ? item.path : '${item.path}/';
+            if (!visited.contains(folderPath)) {
+              queue.add(folderPath);
+            }
+          }
+
+          if (item.name.toLowerCase().contains(lowerQuery)) {
+            matchCount++;
+            yield item;
+          }
+        }
+      }
+
+      onProgress?.call(scannedCount, matchCount);
+    }
   }
 
   String _encodePath(String path) {

@@ -37,7 +37,9 @@ class WideAppBarActions extends StatelessWidget {
           SearchBarWidget(
             initialQuery: loaded.searchQuery,
             onSearch: cubit.search,
+            onGlobalSearch: cubit.startGlobalSearch,
             onClear: cubit.clearSearch,
+            isGlobalSearchLoading: loaded.isGlobalSearchLoading,
           ),
         ],
         const SizedBox(width: 8),

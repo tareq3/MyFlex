@@ -44,33 +44,18 @@ class DirectoryItem extends Equatable {
       title = title.substring(0, specialCharIdx);
     }
 
+    // Truncate at first occurrence of WEB-DL, WEBDL, WEB, ESub, Esubs, BluRay, BRRip, HDRip, DVDRip, 720p, 1080p, 2160p, 4K, x264, x265, HEVC
+    final keywordPattern = RegExp(
+      r'\b(WEB[-_]?DL|WEBDL|WEB|ESub|Esubs|BluRay|BRRip|HDRip|DVDRip|720p|1080p|2160p|4K|x264|x265|HEVC|AMZN|Amazon|Netflix|NF|YIFY|AAC|DTS)\b',
+      caseSensitive: false,
+    );
+    final keywordIdx = title.indexOf(keywordPattern);
+    if (keywordIdx != -1) {
+      title = title.substring(0, keywordIdx);
+    }
+
     title = title.replaceAll(RegExp(r'\b(19|20)\d{2}\b'), '');
     title = title.replaceAll(RegExp(r'[._\-]'), ' ');
-    title = title.replaceAll(RegExp(r'\s+'), ' ').trim();
-    final qualityPatterns = [
-      'BluRay',
-      'BRRip',
-      'HDRip',
-      'WEBRip',
-      'DVDRip',
-      'x264',
-      'x265',
-      'HEVC',
-      '720p',
-      '1080p',
-      '2160p',
-      '4K',
-      'AAC',
-      'DTS',
-      'YIFY',
-      'AMZN',
-      'Amazon',
-      'Netflix',
-      'NF',
-    ];
-    for (final pattern in qualityPatterns) {
-      title = title.replaceAll(RegExp(r'\b' + pattern + r'\b', caseSensitive: false), '');
-    }
     title = title.replaceAll(RegExp(r'\s+'), ' ').trim();
     return title;
   }

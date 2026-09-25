@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../config/constants.dart';
+import '../models/directory_item.dart';
 import '../services/directory_service.dart';
 import 'directory_state.dart';
 
@@ -76,14 +77,20 @@ class DirectoryCubit extends Cubit<DirectoryState> {
     }
   }
 
+  bool _isGlobalSearchCancelled = false;
+
   void search(String query) {
     final currentState = state;
     if (currentState is DirectoryLoaded) {
       if (query.isEmpty) {
+        cancelGlobalSearch();
         emit(
           currentState.copyWith(
             filteredItems: currentState.items,
             searchQuery: '',
+            isGlobalSearch: false,
+            isGlobalSearchLoading: false,
+            scannedFoldersCount: 0,
           ),
         );
       } else {
@@ -92,19 +99,81 @@ class DirectoryCubit extends Cubit<DirectoryState> {
         }).toList();
 
         emit(
-          currentState.copyWith(filteredItems: filtered, searchQuery: query),
+          currentState.copyWith(
+            filteredItems: filtered,
+            searchQuery: query,
+            isGlobalSearch: false,
+            isGlobalSearchLoading: false,
+          ),
         );
       }
     }
   }
 
+  void startGlobalSearch(String query) async {
+    final currentState = state;
+    if (currentState is! DirectoryLoaded || query.trim().isEmpty) return;
+
+    _isGlobalSearchCancelled = false;
+    final foundItems = <DirectoryItem>[];
+
+    emit(
+      currentState.copyWith(
+        searchQuery: query,
+        filteredItems: [],
+        isGlobalSearch: true,
+        isGlobalSearchLoading: true,
+        scannedFoldersCount: 0,
+      ),
+    );
+
+    final stream = _directoryService.recursiveSearch(
+      startPath: _currentServer.startPath,
+      baseUrl: _currentServer.baseUrl,
+      query: query,
+      isCancelled: () => _isGlobalSearchCancelled,
+      onProgress: (scanned, matches) {
+        final st = state;
+        if (st is DirectoryLoaded && st.isGlobalSearch) {
+          emit(st.copyWith(scannedFoldersCount: scanned));
+        }
+      },
+    );
+
+    await for (final item in stream) {
+      if (_isGlobalSearchCancelled) break;
+      foundItems.add(item);
+      final st = state;
+      if (st is DirectoryLoaded && st.isGlobalSearch) {
+        emit(st.copyWith(filteredItems: List.from(foundItems)));
+      }
+    }
+
+    final st = state;
+    if (st is DirectoryLoaded && st.isGlobalSearch) {
+      emit(st.copyWith(isGlobalSearchLoading: false));
+    }
+  }
+
+  void cancelGlobalSearch() {
+    _isGlobalSearchCancelled = true;
+    final currentState = state;
+    if (currentState is DirectoryLoaded) {
+      emit(currentState.copyWith(isGlobalSearchLoading: false));
+    }
+  }
+
   void clearSearch() {
+    cancelGlobalSearch();
     final currentState = state;
     if (currentState is DirectoryLoaded) {
       emit(
         currentState.copyWith(
           filteredItems: currentState.items,
           searchQuery: '',
+          isGlobalSearch: false,
+          isGlobalSearchLoading: false,
+          scannedFoldersCount: 0,
         ),
       );
     }

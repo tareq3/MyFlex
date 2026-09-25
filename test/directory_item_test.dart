@@ -56,5 +56,13 @@ void main() {
       );
       expect(item.extractTitle(), 'Dungeons & Dragons Honor Among Thieves');
     });
+    test('truncates at WEB-DL and Esub tags', () {
+      const item = DirectoryItem(
+        name: 'House of the Dragon S02E01 1080p WEB-DL ESub.mkv',
+        path: '/movies/House of the Dragon S02E01 1080p WEB-DL ESub.mkv',
+        type: DirectoryItemType.video,
+      );
+      expect(item.extractTitle(), 'House of the Dragon S02E01');
+    });
   });
 }

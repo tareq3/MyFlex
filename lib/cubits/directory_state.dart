@@ -28,6 +28,9 @@ class DirectoryLoaded extends DirectoryState {
   final List<DirectoryItem> filteredItems;
   final String searchQuery;
   final List<String> pathSegments;
+  final bool isGlobalSearch;
+  final bool isGlobalSearchLoading;
+  final int scannedFoldersCount;
 
   const DirectoryLoaded({
     required this.path,
@@ -35,6 +38,9 @@ class DirectoryLoaded extends DirectoryState {
     required this.filteredItems,
     this.searchQuery = '',
     required this.pathSegments,
+    this.isGlobalSearch = false,
+    this.isGlobalSearchLoading = false,
+    this.scannedFoldersCount = 0,
   });
 
   int get folderCount => filteredItems.where((i) => i.isFolder).length;
@@ -47,6 +53,9 @@ class DirectoryLoaded extends DirectoryState {
     List<DirectoryItem>? filteredItems,
     String? searchQuery,
     List<String>? pathSegments,
+    bool? isGlobalSearch,
+    bool? isGlobalSearchLoading,
+    int? scannedFoldersCount,
   }) {
     return DirectoryLoaded(
       path: path ?? this.path,
@@ -54,6 +63,9 @@ class DirectoryLoaded extends DirectoryState {
       filteredItems: filteredItems ?? this.filteredItems,
       searchQuery: searchQuery ?? this.searchQuery,
       pathSegments: pathSegments ?? this.pathSegments,
+      isGlobalSearch: isGlobalSearch ?? this.isGlobalSearch,
+      isGlobalSearchLoading: isGlobalSearchLoading ?? this.isGlobalSearchLoading,
+      scannedFoldersCount: scannedFoldersCount ?? this.scannedFoldersCount,
     );
   }
 
@@ -64,6 +76,9 @@ class DirectoryLoaded extends DirectoryState {
     filteredItems,
     searchQuery,
     pathSegments,
+    isGlobalSearch,
+    isGlobalSearchLoading,
+    scannedFoldersCount,
   ];
 }
 

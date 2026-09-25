@@ -31,7 +31,9 @@ class MobileSearchAppBar extends StatelessWidget {
         autofocus: true,
         initialQuery: state.searchQuery,
         onSearch: cubit.search,
+        onGlobalSearch: cubit.startGlobalSearch,
         onClear: cubit.clearSearch,
+        isGlobalSearchLoading: state.isGlobalSearchLoading,
       ),
       actions: const [SizedBox(width: 12)],
     );
