@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
 
@@ -76,7 +77,10 @@ void onStart(ServiceInstance service) {
 /// Runs downloads in an Android foreground service so they survive the app
 /// being backgrounded, and relays progress back to the UI isolate.
 class BackgroundDownloadService extends FileDownloadService {
+  /// Only Android uses the service; other platforms download in-app
+  /// (see DownloadCubit), and the plugin throws on desktop.
   static Future<void> initialize() async {
+    if (!Platform.isAndroid) return;
     final service = FlutterBackgroundService();
     await service.configure(
       androidConfiguration: AndroidConfiguration(
