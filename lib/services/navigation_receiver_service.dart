@@ -5,8 +5,13 @@ import 'dart:io';
 class NavigationCommand {
   final String serverUrl;
   final String path;
+  final String action;
 
-  const NavigationCommand({required this.serverUrl, required this.path});
+  const NavigationCommand({
+    required this.serverUrl,
+    required this.path,
+    this.action = 'navigate',
+  });
 }
 
 class NavigationReceiverService {
@@ -29,9 +34,10 @@ class NavigationReceiverService {
         final json = jsonDecode(body) as Map<String, dynamic>;
         final serverUrl = json['serverUrl'] as String?;
         final path = json['path'] as String?;
+        final action = json['action'] as String? ?? 'navigate';
         if (serverUrl != null && path != null) {
           _commandController.add(
-            NavigationCommand(serverUrl: serverUrl, path: path),
+            NavigationCommand(serverUrl: serverUrl, path: path, action: action),
           );
           request.response.statusCode = HttpStatus.ok;
           request.response.write('OK');

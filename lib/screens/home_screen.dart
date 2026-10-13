@@ -9,8 +9,10 @@ import '../models/directory_item.dart';
 import '../services/network_discovery_service.dart';
 import '../widgets/directory_content.dart';
 import '../widgets/error_view.dart';
+import '../widgets/floating_download_widget.dart';
 import '../widgets/home_app_bar.dart';
 import '../widgets/loading_indicator.dart';
+import 'home_download_actions.dart';
 import 'home_share_actions.dart';
 import 'home_video_actions.dart';
 
@@ -24,7 +26,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>
-    with HomeVideoActions, HomeShareActions {
+    with HomeVideoActions, HomeShareActions, HomeDownloadActions {
   /// Whether the mobile app bar is showing the search field.
   bool _isSearching = false;
 
@@ -71,27 +73,33 @@ class _HomeScreenState extends State<HomeScreen>
           isSearching: _isSearching,
           onSearchingChanged: _setSearching,
           onShare: () => shareCurrentDirectory(widget.discoveryService),
+          onDownloadAll: downloadAllMoviesInCurrentDirectory,
         ),
-        body: BlocBuilder<DirectoryCubit, DirectoryState>(
-          builder: (context, state) {
-            return switch (state) {
-              DirectoryInitial() => const LoadingIndicator(
-                message: 'Initializing...',
-              ),
-              DirectoryLoading() => const LoadingIndicator(
-                message: 'Loading directory...',
-              ),
-              DirectoryLoaded() => DirectoryContent(
-                state: state,
-                onFolderTap: _handleFolderTap,
-                onVideoTap: showVideoActions,
-              ),
-              DirectoryError() => ErrorView(
-                message: state.message,
-                onRetry: () => context.read<DirectoryCubit>().refresh(),
-              ),
-            };
-          },
+        body: Stack(
+          children: [
+            BlocBuilder<DirectoryCubit, DirectoryState>(
+              builder: (context, state) {
+                return switch (state) {
+                  DirectoryInitial() => const LoadingIndicator(
+                    message: 'Initializing...',
+                  ),
+                  DirectoryLoading() => const LoadingIndicator(
+                    message: 'Loading directory...',
+                  ),
+                  DirectoryLoaded() => DirectoryContent(
+                    state: state,
+                    onFolderTap: _handleFolderTap,
+                    onVideoTap: showVideoActions,
+                  ),
+                  DirectoryError() => ErrorView(
+                    message: state.message,
+                    onRetry: () => context.read<DirectoryCubit>().refresh(),
+                  ),
+                };
+              },
+            ),
+            const FloatingDownloadWidget(),
+          ],
         ),
       ),
     );

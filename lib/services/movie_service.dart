@@ -21,7 +21,7 @@ class MovieService {
       final queryParams = <String, String>{
         'apikey': omdbApiKey,
         't': title,
-        if (year != null) 'y': year,
+        'y': ?year,
       };
 
       final url = Uri.parse(omdbBaseUrl).replace(queryParameters: queryParams);
@@ -64,7 +64,10 @@ class MovieService {
       if (searchResults == null || searchResults.isEmpty) return null;
 
       final firstResult = searchResults.first as Map<String, dynamic>;
-      return fetchMovieInfo(firstResult['Title'], year: firstResult['Year']);
+      return await fetchMovieInfo(
+        firstResult['Title'],
+        year: firstResult['Year'],
+      );
     } catch (e) {
       return null;
     }

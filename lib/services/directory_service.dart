@@ -84,7 +84,9 @@ class DirectoryService {
       for (final items in results) {
         for (final item in items) {
           if (item.isFolder) {
-            final folderPath = item.path.endsWith('/') ? item.path : '${item.path}/';
+            final folderPath = item.path.endsWith('/')
+                ? item.path
+                : '${item.path}/';
             if (!visited.contains(folderPath)) {
               queue.add(folderPath);
             }
@@ -99,6 +101,40 @@ class DirectoryService {
 
       onProgress?.call(scannedCount, matchCount);
     }
+  }
+
+  Future<List<DirectoryItem>> fetchAllVideosInDirectory({
+    required String startPath,
+    required String baseUrl,
+  }) async {
+    final videos = <DirectoryItem>[];
+    final queue = <String>[startPath];
+    final visited = <String>{};
+
+    while (queue.isNotEmpty) {
+      final currentPath = queue.removeAt(0);
+      if (visited.contains(currentPath)) continue;
+      visited.add(currentPath);
+
+      try {
+        final items = await fetchDirectory(currentPath, baseUrl: baseUrl);
+        for (final item in items) {
+          if (item.isVideo) {
+            videos.add(item);
+          } else if (item.isFolder) {
+            final folderPath = item.path.endsWith('/')
+                ? item.path
+                : '${item.path}/';
+            if (!visited.contains(folderPath)) {
+              queue.add(folderPath);
+            }
+          }
+        }
+      } catch (_) {
+        // ignore errors on subfolders
+      }
+    }
+    return videos;
   }
 
   String _encodePath(String path) {

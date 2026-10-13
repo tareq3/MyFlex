@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 import 'app.dart';
+import 'services/background_download_service.dart';
 
 final _updater = ShorebirdUpdater();
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await BackgroundDownloadService.initialize();
   _checkForUpdate();
   runApp(const DhakaFlixApp());
 }

@@ -28,7 +28,9 @@ class DirectoryContent extends StatelessWidget {
       builder: (context, movieState) {
         Widget buildBody() {
           final grid = DirectoryGrid(
-            currentPath: state.isGlobalSearch ? 'global_${state.searchQuery}' : state.path,
+            currentPath: state.isGlobalSearch
+                ? 'global_${state.searchQuery}'
+                : state.path,
             items: state.filteredItems,
             onFolderTap: onFolderTap,
             onVideoTap: onVideoTap,
@@ -44,7 +46,10 @@ class DirectoryContent extends StatelessWidget {
               if (state.isGlobalSearch)
                 Container(
                   color: AppTheme.cardColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
                       if (state.isGlobalSearchLoading) ...[

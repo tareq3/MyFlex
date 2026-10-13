@@ -11,11 +11,13 @@ import 'stats_bar.dart';
 class WideAppBarActions extends StatelessWidget {
   final DirectoryLoaded? state;
   final VoidCallback onShare;
+  final VoidCallback? onDownloadAll;
 
   const WideAppBarActions({
     super.key,
     required this.state,
     required this.onShare,
+    this.onDownloadAll,
   });
 
   @override
@@ -45,6 +47,11 @@ class WideAppBarActions extends StatelessWidget {
         const SizedBox(width: 8),
         const ServerSelector(),
         const SizedBox(width: 8),
+        IconButton(
+          icon: const Icon(Icons.file_download),
+          tooltip: 'Download all movies from directory',
+          onPressed: loaded == null ? null : onDownloadAll,
+        ),
         IconButton(
           icon: const Icon(Icons.share),
           tooltip: 'Share this directory',

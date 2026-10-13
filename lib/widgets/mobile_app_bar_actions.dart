@@ -8,16 +8,19 @@ class MobileAppBarActions extends StatelessWidget {
   final bool canSearch;
   final VoidCallback onSearch;
   final VoidCallback onShare;
+  final VoidCallback? onDownloadAll;
 
   const MobileAppBarActions({
     super.key,
     required this.canSearch,
     required this.onSearch,
     required this.onShare,
+    this.onDownloadAll,
   });
 
   @override
   Widget build(BuildContext context) {
+    final downloadAction = onDownloadAll;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -32,6 +35,12 @@ class MobileAppBarActions extends StatelessWidget {
           tooltip: 'More options',
           onSelected: (action) => action(),
           itemBuilder: (context) => [
+            if (downloadAction != null)
+              _menuItem(
+                Icons.file_download,
+                'Download all movies',
+                downloadAction,
+              ),
             _menuItem(Icons.share, 'Share this directory', onShare),
             _menuItem(
               Icons.refresh,

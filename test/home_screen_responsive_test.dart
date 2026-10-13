@@ -1,4 +1,5 @@
 import 'package:dhaka_flix/cubits/directory_cubit.dart';
+import 'package:dhaka_flix/cubits/download_cubit.dart';
 import 'package:dhaka_flix/cubits/movie_info_cubit.dart';
 import 'package:dhaka_flix/models/directory_item.dart';
 import 'package:dhaka_flix/screens/home_screen.dart';
@@ -36,6 +37,7 @@ Future<void> _pumpHome(WidgetTester tester, Size size) async {
       providers: [
         BlocProvider.value(value: cubit),
         BlocProvider(create: (_) => MovieInfoCubit()),
+        BlocProvider(create: (_) => DownloadCubit()),
       ],
       child: MaterialApp(
         theme: AppTheme.darkTheme,

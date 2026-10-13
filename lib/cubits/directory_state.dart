@@ -64,7 +64,8 @@ class DirectoryLoaded extends DirectoryState {
       searchQuery: searchQuery ?? this.searchQuery,
       pathSegments: pathSegments ?? this.pathSegments,
       isGlobalSearch: isGlobalSearch ?? this.isGlobalSearch,
-      isGlobalSearchLoading: isGlobalSearchLoading ?? this.isGlobalSearchLoading,
+      isGlobalSearchLoading:
+          isGlobalSearchLoading ?? this.isGlobalSearchLoading,
       scannedFoldersCount: scannedFoldersCount ?? this.scannedFoldersCount,
     );
   }

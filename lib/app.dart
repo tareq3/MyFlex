@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'config/constants.dart';
 import 'cubits/directory_cubit.dart';
+import 'cubits/download_cubit.dart';
 import 'cubits/movie_info_cubit.dart';
 import 'screens/home_screen.dart';
 import 'services/deep_link_service.dart';
@@ -86,6 +87,7 @@ class _DhakaFlixAppState extends State<DhakaFlixApp> {
       providers: [
         BlocProvider.value(value: _directoryCubit),
         BlocProvider(create: (_) => MovieInfoCubit()),
+        BlocProvider(create: (_) => DownloadCubit()),
       ],
       child: MaterialApp(
         title: 'Dhaka Flix',

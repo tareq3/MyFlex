@@ -65,13 +65,13 @@ class VlcService {
     try {
       final vlcFile = File(vlcPath);
       if (!vlcFile.existsSync()) {
-        return _fallbackToUrlLauncher(url);
+        return await _fallbackToUrlLauncher(url);
       }
 
       await Process.start(vlcPath, [url], mode: ProcessStartMode.detached);
       return true;
     } catch (e) {
-      return _fallbackToUrlLauncher(url);
+      return await _fallbackToUrlLauncher(url);
     }
   }
 

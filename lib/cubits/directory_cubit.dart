@@ -13,6 +13,7 @@ class DirectoryCubit extends Cubit<DirectoryState> {
     : _directoryService = directoryService ?? DirectoryService(),
       super(const DirectoryInitial());
 
+  DirectoryService get directoryService => _directoryService;
   ServerConfig get currentServer => _currentServer;
 
   Future<void> loadDirectory(String path) async {
