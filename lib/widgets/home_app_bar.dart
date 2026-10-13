@@ -15,6 +15,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ValueChanged<bool> onSearchingChanged;
   final VoidCallback onShare;
   final VoidCallback? onDownloadAll;
+  final VoidCallback onSendFiles;
 
   const HomeAppBar({
     super.key,
@@ -22,6 +23,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onSearchingChanged,
     required this.onShare,
     this.onDownloadAll,
+    required this.onSendFiles,
   });
 
   @override
@@ -65,12 +67,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onSearch: () => onSearchingChanged(true),
                 onShare: onShare,
                 onDownloadAll: onDownloadAll,
+                onSendFiles: onSendFiles,
               )
             else
               WideAppBarActions(
                 state: loaded,
                 onShare: onShare,
                 onDownloadAll: onDownloadAll,
+                onSendFiles: onSendFiles,
               ),
           ],
         );

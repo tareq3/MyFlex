@@ -6,6 +6,7 @@ import '../config/breakpoints.dart';
 import '../cubits/directory_cubit.dart';
 import '../cubits/directory_state.dart';
 import '../models/directory_item.dart';
+import '../services/file_share_service.dart';
 import '../services/network_discovery_service.dart';
 import '../widgets/directory_content.dart';
 import '../widgets/error_view.dart';
@@ -18,8 +19,13 @@ import 'home_video_actions.dart';
 
 class HomeScreen extends StatefulWidget {
   final NetworkDiscoveryService discoveryService;
+  final FileShareService fileShareService;
 
-  const HomeScreen({super.key, required this.discoveryService});
+  const HomeScreen({
+    super.key,
+    required this.discoveryService,
+    required this.fileShareService,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -74,6 +80,10 @@ class _HomeScreenState extends State<HomeScreen>
           onSearchingChanged: _setSearching,
           onShare: () => shareCurrentDirectory(widget.discoveryService),
           onDownloadAll: downloadAllMoviesInCurrentDirectory,
+          onSendFiles: () => sendDownloadedFiles(
+            widget.discoveryService,
+            widget.fileShareService,
+          ),
         ),
         body: Stack(
           children: [

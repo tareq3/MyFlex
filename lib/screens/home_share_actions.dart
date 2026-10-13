@@ -5,12 +5,15 @@ import 'package:share_plus/share_plus.dart';
 import '../cubits/directory_cubit.dart';
 import '../cubits/directory_state.dart';
 import '../cubits/local_devices_cubit.dart';
+import '../models/shared_file_offer.dart';
 import '../services/deep_link_service.dart';
+import '../services/file_share_service.dart';
 import '../services/network_discovery_service.dart';
 import '../services/share_sender_service.dart';
 import '../widgets/device_picker_sheet.dart';
+import '../widgets/send_files_sheet.dart';
 
-/// Shares the current directory to a nearby device or another app.
+/// Shares the current directory or downloaded files with nearby devices.
 mixin HomeShareActions<T extends StatefulWidget> on State<T> {
   final ShareSenderService _shareSender = ShareSenderService();
 
@@ -69,5 +72,61 @@ mixin HomeShareActions<T extends StatefulWidget> on State<T> {
         ),
       ),
     );
+  }
+
+  Future<void> sendDownloadedFiles(
+    NetworkDiscoveryService discoveryService,
+    FileShareService fileShare,
+  ) async {
+    final files = await fileShare.listDownloadedVideos();
+    if (!mounted) return;
+    if (files.isEmpty) {
+      _showSnackBar('No downloaded movies to send');
+      return;
+    }
+
+    final selected = await showModalBottomSheet<List<SharedFile>>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => SendFilesSheet(files: files),
+    );
+    if (!mounted || selected == null || selected.isEmpty) return;
+
+    final device = await _pickDevice(discoveryService);
+    if (!mounted || device == null) return;
+
+    final success = await fileShare.sendOffer(device, selected);
+    if (!mounted) return;
+    _showSnackBar(
+      success
+          ? 'Sent to ${device.name}. Keep the app open until it finishes.'
+          : 'Failed to reach ${device.name}',
+    );
+  }
+
+  Future<DiscoveredDevice?> _pickDevice(
+    NetworkDiscoveryService discoveryService,
+  ) async {
+    final devicesCubit = LocalDevicesCubit(discoveryService: discoveryService);
+    devicesCubit.startDiscovery();
+    final device = await showModalBottomSheet<DiscoveredDevice>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => BlocProvider.value(
+        value: devicesCubit,
+        child: DevicePickerSheet(
+          title: 'Send to Device',
+          onDeviceSelected: (device) => Navigator.pop(sheetContext, device),
+        ),
+      ),
+    );
+    await devicesCubit.close();
+    return device;
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

@@ -4,6 +4,7 @@ import 'package:dhaka_flix/cubits/movie_info_cubit.dart';
 import 'package:dhaka_flix/models/directory_item.dart';
 import 'package:dhaka_flix/screens/home_screen.dart';
 import 'package:dhaka_flix/services/directory_service.dart';
+import 'package:dhaka_flix/services/file_share_service.dart';
 import 'package:dhaka_flix/services/network_discovery_service.dart';
 import 'package:dhaka_flix/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,10 @@ Future<void> _pumpHome(WidgetTester tester, Size size) async {
       ],
       child: MaterialApp(
         theme: AppTheme.darkTheme,
-        home: HomeScreen(discoveryService: NetworkDiscoveryService()),
+        home: HomeScreen(
+          discoveryService: NetworkDiscoveryService(),
+          fileShareService: FileShareService(),
+        ),
       ),
     ),
   );

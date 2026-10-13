@@ -12,12 +12,14 @@ class WideAppBarActions extends StatelessWidget {
   final DirectoryLoaded? state;
   final VoidCallback onShare;
   final VoidCallback? onDownloadAll;
+  final VoidCallback onSendFiles;
 
   const WideAppBarActions({
     super.key,
     required this.state,
     required this.onShare,
     this.onDownloadAll,
+    required this.onSendFiles,
   });
 
   @override
@@ -56,6 +58,11 @@ class WideAppBarActions extends StatelessWidget {
           icon: const Icon(Icons.share),
           tooltip: 'Share this directory',
           onPressed: onShare,
+        ),
+        IconButton(
+          icon: const Icon(Icons.send_to_mobile),
+          tooltip: 'Send downloaded movies to a device',
+          onPressed: onSendFiles,
         ),
         IconButton(
           icon: const Icon(Icons.refresh),

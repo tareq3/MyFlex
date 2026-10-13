@@ -9,6 +9,7 @@ class MobileAppBarActions extends StatelessWidget {
   final VoidCallback onSearch;
   final VoidCallback onShare;
   final VoidCallback? onDownloadAll;
+  final VoidCallback onSendFiles;
 
   const MobileAppBarActions({
     super.key,
@@ -16,6 +17,7 @@ class MobileAppBarActions extends StatelessWidget {
     required this.onSearch,
     required this.onShare,
     this.onDownloadAll,
+    required this.onSendFiles,
   });
 
   @override
@@ -42,6 +44,11 @@ class MobileAppBarActions extends StatelessWidget {
                 downloadAction,
               ),
             _menuItem(Icons.share, 'Share this directory', onShare),
+            _menuItem(
+              Icons.send_to_mobile,
+              'Send downloaded movies',
+              onSendFiles,
+            ),
             _menuItem(
               Icons.refresh,
               'Refresh',

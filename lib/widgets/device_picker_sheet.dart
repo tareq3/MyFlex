@@ -9,12 +9,14 @@ import 'device_list_tile.dart';
 
 class DevicePickerSheet extends StatelessWidget {
   final void Function(DiscoveredDevice device) onDeviceSelected;
-  final VoidCallback onOtherApps;
+  final VoidCallback? onOtherApps;
+  final String title;
 
   const DevicePickerSheet({
     super.key,
     required this.onDeviceSelected,
-    required this.onOtherApps,
+    this.onOtherApps,
+    this.title = 'Share to Device',
   });
 
   @override
@@ -25,10 +27,7 @@ class DevicePickerSheet extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              'Share to Device',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
           ),
           Flexible(
             child: BlocBuilder<LocalDevicesCubit, LocalDevicesState>(
@@ -41,17 +40,20 @@ class DevicePickerSheet extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: onOtherApps,
-                icon: const Icon(Icons.share),
-                label: const Text('Other apps...'),
+          if (onOtherApps != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: onOtherApps,
+                  icon: const Icon(Icons.share),
+                  label: const Text('Other apps...'),
+                ),
               ),
-            ),
-          ),
+            )
+          else
+            const SizedBox(height: 16),
         ],
       ),
     );
