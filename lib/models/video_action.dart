@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 enum VideoAction {
   play('Play', Icons.play_arrow),
+  playOnTv('Play on TV', Icons.tv),
   download('Download', Icons.download),
   share('Share', Icons.share),
   copyLink('Copy Link', Icons.copy);

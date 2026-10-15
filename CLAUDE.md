@@ -26,6 +26,10 @@ services/
   directory_service  GET baseUrl+path, parses HTML index into DirectoryItems
   movie_service      OMDb API
   vlc_service        Builds video URL; plays in VLC (desktop process / Android intent / iOS url) or opens browser
+  vlc_remote_service "Play on TV": VLC for Android Remote access. HTTPS port (self-signed) is 8443 only if free — else random;
+                     resolve it via GET http://:8080/secure-url. POST /code → TV shows OTP, body = challenge;
+                     POST /verify-code code=sha256hex(otp+challenge) → user_session cookie (1 yr), GET http://:8080/play?id=0&path=<url> (play is plain HTTP). 401 = re-pair, 403 = VLC not foreground
+  vlc_tv_storage     Paired TV (host/port/cookie) in shared_preferences; UI flow in screens/home_tv_actions mixin
   deep_link_service  dhakaflix://open?server=<baseUrl>&path=<path>
   network_discovery  bonsoir mDNS `_dhakaflix._tcp` advertise + discover
   navigation_receiver  Local HttpServer, POST /navigate {serverUrl, path} → cubit navigates

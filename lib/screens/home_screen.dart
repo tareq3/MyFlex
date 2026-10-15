@@ -15,6 +15,7 @@ import '../widgets/home_app_bar.dart';
 import '../widgets/loading_indicator.dart';
 import 'home_download_actions.dart';
 import 'home_share_actions.dart';
+import 'home_tv_actions.dart';
 import 'home_video_actions.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +33,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>
-    with HomeVideoActions, HomeShareActions, HomeDownloadActions {
+    with
+        HomeTvActions,
+        HomeVideoActions,
+        HomeShareActions,
+        HomeDownloadActions {
   /// Whether the mobile app bar is showing the search field.
   bool _isSearching = false;
 

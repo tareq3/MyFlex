@@ -12,6 +12,7 @@ class VideoActionsDialog extends StatelessWidget {
     VideoAction.copyLink,
     VideoAction.share,
     VideoAction.download,
+    VideoAction.playOnTv,
   ];
 
   @override

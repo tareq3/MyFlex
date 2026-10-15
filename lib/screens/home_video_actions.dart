@@ -11,10 +11,11 @@ import '../services/vlc_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/video_actions_dialog.dart';
 import '../widgets/video_actions_sheet.dart';
+import 'home_tv_actions.dart';
 
 /// Lets the user pick what to do with a video: a bottom sheet on mobile,
 /// a dialog on larger screens.
-mixin HomeVideoActions<T extends StatefulWidget> on State<T> {
+mixin HomeVideoActions<T extends StatefulWidget> on State<T>, HomeTvActions<T> {
   final VlcService _vlcService = VlcService();
 
   Future<void> showVideoActions(DirectoryItem item) async {
@@ -40,6 +41,8 @@ mixin HomeVideoActions<T extends StatefulWidget> on State<T> {
           _vlcService.playVideo(item.path),
           'Failed to open video player.',
         );
+      case VideoAction.playOnTv:
+        await playOnTv(_vlcService.getVideoUrl(item.path));
       case VideoAction.download:
         await _launch(
           _vlcService.openInBrowser(item.path),
